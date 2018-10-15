@@ -38,6 +38,9 @@ class Decryptor(object):
         self.keys = base64.decodebytes(b64Keys)
 
         self.RSADecrypt()
+        self.HMACVerify()
+        self.AESDecrypt()
+
 
 
 
@@ -45,5 +48,11 @@ class Decryptor(object):
         with open(self.privateCertificate, 'rb') as keyFile:                         #open private certificate file
             privateKey = serialization.load_pem_private_key(keyFile.read(), password=None, backend=default_backend())          #create privatekey object
         keys = privateKey.decrypt(self.keys, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(),label=None))           #RSA Decrypt
-        self.AESKey = keys[:(self.keySize)]
-        self.HMACKey = keys[(self.keySize):]
+        self.AESKey = keys[:self.keySize]                       #slice AES key
+        self.HMACKey = keys[(self.keySize):]                    #slice HMAC key
+
+    def HMACVerify(self):
+        return
+    
+    def AESDecrypt(self):
+        return
