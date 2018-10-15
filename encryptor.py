@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 
 
 class Encryptor(object):
-    def __init__(self, keySize, blockSize, ivSize, message, publicCertificate):
+    def __init__(self, keySize, blockSize, ivSize, message, publicCertificate, jsonFile):
         self.keySize = keySize
         self.publicCertificate = publicCertificate
         self.message = message
@@ -19,6 +19,7 @@ class Encryptor(object):
         self.AESKey = None
         self.HMACKey = None
         self.cipherText = None
+        self.jsonFile = jsonFile
 
 
     def encrypt(self):
@@ -30,8 +31,7 @@ class Encryptor(object):
         ASCIIKeys = b64Keys.decode('ascii')                         #b64 to ascii
         data = {'Msg': ASCIIMsg, 'HMAC': ASCIIHMAC, 'Keys': ASCIIKeys}  #create dictionary with our data
         jsonData = json.dumps(data)                                                #dictionary to json
-        fileLoc = "/Users/mcastro/Desktop/encrypt.json"
-        with open("/Users/mcastro/Desktop/encrypt.json", 'w') as outFile:
+        with open(self.jsonFile, 'w') as outFile:
             json.dump(jsonData, outFile)
         return fileLoc
 
