@@ -32,8 +32,7 @@ class Encryptor(object):
         data = {'Msg': ASCIIMsg, 'HMAC': ASCIIHMAC, 'Keys': ASCIIKeys}  #create dictionary with our data
         jsonData = json.dumps(data)                                                #dictionary to json
         with open(self.jsonFile, 'w') as outFile:
-            json.dump(jsonData, outFile)
-        return fileLoc
+            json.dump(jsonData, outFile)                                            #write to jsonFile
 
     def AESEncrypt(self):
         key = os.urandom(self.keySize)  # generate key
