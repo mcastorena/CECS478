@@ -1,7 +1,6 @@
-
-
 import os
 import base64
+import json
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding as p
@@ -23,10 +22,18 @@ class Encryptor(object):
 
 
     def encrypt(self):
-        asciiMSG = (self.AESEncrypt()).decode('UTF-8')
-        asciiHMAC = (self.HMAC(self.cipherText)).decode('UTF-8')
-        asciiKeys = (self.RSAEncrypt()).decode('UTF-8')
-        return
+        b64MSG =  base64.encodebytes(self.AESEncrypt())            #AES encrypt message then bytes to b64
+        ASCIIMsg = b64MSG.decode('ascii')                           #b64 to ascii
+        b64HMAC = base64.encodebytes(self.HMAC())                    #HMAC then digest to b64
+        ASCIIHMAC = b64HMAC.decode('ascii')                        #b64 to ascii
+        b64Keys = base64.encodebytes(self.RSAEncrypt())             #RSA encrypt keys then bytes to b64
+        ASCIIKeys = b64Keys.decode('ascii')                         #b64 to ascii
+        data = {'Msg': ASCIIMsg, 'HMAC': ASCIIHMAC, 'Keys': ASCIIKeys}  #create dictionary with our data
+        jsonData = json.dumps(data)                                                #dictionary to json
+        fileLoc = "/Users/mcastro/Desktop/encrypt.json"
+        with open("/Users/mcastro/Desktop/encrypt.json", 'w') as outFile:
+            json.dump(jsonData, outFile)
+        return fileLoc
 
     def AESEncrypt(self):
         key = os.urandom(self.keySize)  # generate key
@@ -42,19 +49,18 @@ class Encryptor(object):
         self.cipherText = cipherText
         return cipherText
 
-    def HMAC(self,cipherText):
+    def HMAC(self):
         HMACKey = os.urandom(self.keySize)  # generate HMAC key
         self.HMACKey = HMACKey              # save HMAC key
         h = hmac.HMAC(HMACKey, hashes.SHA256(), backend=default_backend())  # create hash algorithm object
-        h.update(cipherText)  # bytes to hash and authenticate
+        h.update(self.cipherText)  # bytes to hash and authenticate
         digest = h.finalize()  # finalize hash and return digest as bytes
         return digest
 
     def RSAEncrypt(self):
         with open(self.publicCertificate, "rb") as publicKey:                                #load public key from filepath
-            public_key = serialization.load_pem_public_key(publicKey.read(),password=None,backend=default_backend())
+            public_key = serialization.load_pem_public_key(publicKey.read(),backend=default_backend())
         keys = self.AESKey + self.HMACKey
-        cipherKeys = publicKey.encrypt(keys, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(),label=None))  # encrypt keys
+        cipherKeys = public_key.encrypt(keys, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()), algorithm=hashes.SHA256(),label=None))  # encrypt keys
         return cipherKeys
 
-Encryptor(32, 128, 16, "CECS478", "/Users/mcastro/Documents/public.pem").encrypt()
