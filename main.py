@@ -1,5 +1,5 @@
-publicCertificate = "/Users/mcastro/Documents/public.pem"
-privateCertificate = "/Users/mcastro/Documents/private.pem"
+publicCertificate = "/Users/mcastro/Desktop/public.pem"
+privateCertificate = "/Users/mcastro/Desktop/private.pem"
 jsonFile = "/Users/mcastro/Desktop/encrypt.json"
 from encryptor import Encryptor
 from decryptor import Decryptor
@@ -32,3 +32,5 @@ print("Messasge will now be decrypted")
 myDecryptor = Decryptor(keysize, blockSize, ivSize, jsonFile, privateCertificate)
 myDecryptor.decrypt()
 
+#print(myDecryptor.AESKey == myEncryptor.AESKey)         test to see if keys match
+#print(myDecryptor.HMACKey==myEncryptor.HMACKey)
