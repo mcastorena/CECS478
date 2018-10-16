@@ -1,26 +1,12 @@
+from encryptor import Encryptor
+from decryptor import Decryptor
 publicCertificate = "/Users/mcastro/Desktop/public.pem"
 privateCertificate = "/Users/mcastro/Desktop/private.pem"
 jsonFile = "/Users/mcastro/Desktop/encrypt.json"
-from encryptor import Encryptor
-from decryptor import Decryptor
-import os
-import base64
 
 keysize = 32        #32 bytes
 blockSize = 128     #128 bits
 ivSize = 16         #16 bytes
-
-# iv = os.urandom(16)  # generate iv
-# byteMSG = bytes("CECS478", "UTF-8")
-# test = iv + byteMSG
-#
-# print(iv)
-# print(type(byteMSG))
-# print(byteMSG)
-# print(test)
-#
-# iv2 = test[:16]
-# print("iv2:", iv2)
 
 inputString = input("Input message to encrypt: ")
 print("Encrypting message: ", inputString)
@@ -28,9 +14,7 @@ myEncryptor = Encryptor(keysize, blockSize, ivSize, inputString, publicCertifica
 myEncryptor.encrypt()
 print("Message encrypted")
 
-print("Messasge will now be decrypted")
+print("\nMessasge will now be decrypted")
 myDecryptor = Decryptor(keysize, blockSize, ivSize, jsonFile, privateCertificate)
 myDecryptor.decrypt()
 
-#print(myDecryptor.AESKey == myEncryptor.AESKey)         test to see if keys match
-#print(myDecryptor.HMACKey==myEncryptor.HMACKey)
