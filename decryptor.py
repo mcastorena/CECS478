@@ -22,21 +22,25 @@ class Decryptor(object):
         self.AESKey = None
         self.HMACKey = None
 
-    def decrypt(self):
-        with open(self.jsonFile) as jsonFile:  # open JSON file
-            jsonData = json.load(jsonFile)  # load json data from file
-            data = json.loads(jsonData)  # load json data into dictionary
-        ASCIIMsg = data['Msg']  # get values from dictionary
-        ASCIIHMAC = data['HMAC']
-        ASCIIKeys = data['Keys']
+    def decrypt(self, msg):
+        # with open(self.jsonFile) as jsonFile:  # open JSON file
+        #     jsonData = json.load(jsonFile)  # load json data from file
+        #     data = json.loads(jsonData)  # load json data into dictionary
+        # ASCIIMsg = data['Msg']  # get values from dictionary
+        # ASCIIHMAC = data['HMAC']
+        # ASCIIKeys = data['Keys']
+        #
+        # b64MSG = ASCIIMsg.encode('ascii')  # ascii to b64
+        # b64HMAC = ASCIIHMAC.encode('ascii')
+        # b64Keys = ASCIIKeys.encode('ascii')
+        #
+        # self.msg = base64.decodebytes(b64MSG)  # b64 to bytes
+        # self.HMAC = base64.decodebytes(b64HMAC)
+        # self.keys = base64.decodebytes(b64Keys)
 
-        b64MSG = ASCIIMsg.encode('ascii')  # ascii to b64
-        b64HMAC = ASCIIHMAC.encode('ascii')
-        b64Keys = ASCIIKeys.encode('ascii')
-
-        self.msg = base64.decodebytes(b64MSG)  # b64 to bytes
-        self.HMAC = base64.decodebytes(b64HMAC)
-        self.keys = base64.decodebytes(b64Keys)
+        self.msg = msg['Msg']
+        self.HMAC = msg['HMAC']
+        self.keys = msg['Keys']
 
         self.RSADecrypt()
         self.HMACVerify()
