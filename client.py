@@ -14,6 +14,18 @@ class Client(object):
         self.JWT = None
         self.token = None
 
+        
+    def singUp (self, email, password, URL):
+        try:
+            self.payload = {'email': email, 'password' : password}
+            self.response = requests.posts( URL, params = self.payload)
+            self.JWT = self.response.json()
+            self.token = self.JWT['token']
+            print("Sign up succesful")
+        except:
+            raise ValueError('Sign up failed')
+
+        
     def login(self, email, password):
         try:
             self.payload = {'email': email, 'password': password}
