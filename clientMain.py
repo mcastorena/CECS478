@@ -1,5 +1,3 @@
-from encryptor import Encryptor
-from decryptor import Decryptor
 from client import Client
 import requests
 publicCertificate = "/Users/mcastro/Desktop/public.pem"
@@ -7,22 +5,35 @@ privateCertificate = "/Users/mcastro/Desktop/private.pem"
 jsonFile = "/Users/mcastro/Desktop/encrypt.json"
 loginURL = "http://54.153.48.132:3000/api/authenticate"
 chatURL = "http://54.153.48.132:3000/api/chat"
+signURL = "http://54.153.48.132:3000/api/register"
+
 
 keysize = 32        #32 bytes
 blockSize = 128     #128 bits
 ivSize = 16         #16 bytes
 
-inputEmail = input("Enter email address: ")
-inputPassword = input("Enter password: ")
 
-print("Logging in user: ", inputEmail)
-myClient = Client(loginURL)
-try:
-    myClient.login(inputEmail, inputPassword)               #login with given email and password
-except ValueError:                                          #if login fails prompt user for username and password again
-    inputEmail = input("Enter email address: ")
-    inputPassword = input("Enter password: ")
-    myClient.login(inputEmail, inputPassword)
+ession = True
+while (session):
+    print("Input options: \n\t1: Sign up \n\t2: Login")
+    option = input("Input choice: ")
+
+    if (option == '1'):
+        inputEmail = input("Enter email address: ")
+        inputPassword = input("Enter password: ")
+
+        print("Logging in user: ", inputEmail)
+        myClient = Client(signURL)
+        myClient.signUp(inputEmail, inputPassword)               #login with given email and password
+   if (option == '2'):
+        print("Logging in user: ", inputEmail)
+        myClient = Client(loginURL)
+        try:
+            myClient.login(inputEmail, inputPassword)  # login with given email and password
+        except ValueError:  # if login fails prompt user for username and password again
+            inputEmail = input("Enter email address: ")
+            inputPassword = input("Enter password: ")
+            myClient.login(inputEmail, inputPassword)
 
 session = True                                              #session boolean set to true
 myEncryptor = Encryptor(keysize, blockSize, ivSize, publicCertificate, jsonFile)
