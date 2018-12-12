@@ -1,8 +1,4 @@
-from encryptor import Encryptor
-from decryptor import Decryptor
 import requests
-publicCertificate = "/Users/mcastro/Desktop/public.pem"
-privateCertificate = "/Users/mcastro/Desktop/private.pem"
 
 class Client(object):
     def __init__(self, url):
@@ -14,18 +10,18 @@ class Client(object):
         self.JWT = None
         self.token = None
 
-        
-    def singUp (self, email, password, URL):
-        try:
-            self.payload = {'email': email, 'password' : password}
-            self.response = requests.posts( URL, params = self.payload)
-            self.JWT = self.response.json()
-            self.token = self.JWT['token']
-            print("Sign up succesful")
-        except:
-            raise ValueError('Sign up failed')
+    def register(self, email, password):
 
-        
+        payload = {'email': email, 'password': password}
+        requests.post("http://54.153.48.132:3000/api/register", data = payload)        #post request
+        print("User: ", email, "registered succesfully")
+        # try:
+        #     payload = {'email': email, 'password': password}
+        #     requests.post("54.153.48.132:3000/api/register", data = payload)        #post request
+        #     print("User: ", email, "registered succesfully")
+        # except:
+        #     print("Registration failed.")
+
     def login(self, email, password):
         try:
             self.payload = {'email': email, 'password': password}
@@ -36,29 +32,24 @@ class Client(object):
         except:
             raise ValueError('Login failed')
 
-    def postMsg(self, URL, recipient, message):
+    def postMsg(self, URL, recipient, message):             #message passed as dictionary containing msg, keys, and HMAC tag
         print("Sending message...")
-        head = {'Authorization': self.token}
-        body = {'to': recipient, 'message_body': message}
-
-        msgResponse = requests.post(URL, headers=head, data=body)
-        # try:
-        #     msgResponse = requests.post(URL, headers= head, data= body)
-        # except:
-        #     raise ValueError('Message could not be sent')
+        head = {'Authorization': self.token}                #create header
+        mymessage = "HMAC: "+str(message['HMAC'])+" Keys: "+ str(message['Keys'])+ " Msg: "+str(message['Msg'])     #create message in string format
+        body = {'to': recipient, 'message_body': mymessage}                                                         #post request body
+        try:
+            msgResponse = requests.post(URL, headers= head, data= body)                                             #send message
+        except:
+            raise ValueError('Message could not be sent')
 
 
 
     def getMsg(self, URL):
         print("Fetching new messages...")
-        head = {'Authorization': self.token}
-        msgResponse = requests.get(URL, headers=head)
-        return msgResponse
-        # try:
-        #     msgResponse = requests.get(URL, headers=head)
-        #     return msgResponse
-        # except:
-        #     raise ValueError('Messages could not be fetched')
+        head = {'Authorization': self.token}            #get JWT token
+        msgResponse = requests.get(URL, headers=head)   #send request and save return object
+        data = {'Response': msgResponse, 'Headers': head}   #return dictionary with messages and header
+        return data
 
 
 
