@@ -17,4 +17,3 @@ print("Message encrypted")
 print("\nMessasge will now be decrypted")
 myDecryptor = Decryptor(keysize, blockSize, ivSize, jsonFile, privateCertificate)
 myDecryptor.decrypt()
-
