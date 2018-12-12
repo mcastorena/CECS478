@@ -10,10 +10,10 @@ from cryptography.hazmat.primitives.asymmetric import padding
 
 
 class Decryptor(object):
-    def __init__(self, keySize, blockSize, ivSize, jsonFile, privateCertificate):
+    def __init__(self, keySize, blockSize, ivSize, privateCertificate):
         self.keySize = keySize
         self.privateCertificate = privateCertificate
-        self.jsonFile = jsonFile
+        self.jsonFile = None
         self.ivSize = ivSize
         self.blockSize = blockSize
         self.msg = None
@@ -22,29 +22,22 @@ class Decryptor(object):
         self.AESKey = None
         self.HMACKey = None
 
-    def decrypt(self, msg):
-        # with open(self.jsonFile) as jsonFile:  # open JSON file
-        #     jsonData = json.load(jsonFile)  # load json data from file
-        #     data = json.loads(jsonData)  # load json data into dictionary
-        # ASCIIMsg = data['Msg']  # get values from dictionary
-        # ASCIIHMAC = data['HMAC']
-        # ASCIIKeys = data['Keys']
-        #
-        # b64MSG = ASCIIMsg.encode('ascii')  # ascii to b64
-        # b64HMAC = ASCIIHMAC.encode('ascii')
-        # b64Keys = ASCIIKeys.encode('ascii')
-        #
-        # self.msg = base64.decodebytes(b64MSG)  # b64 to bytes
-        # self.HMAC = base64.decodebytes(b64HMAC)
-        # self.keys = base64.decodebytes(b64Keys)
+    def decrypt(self, data):
+        ASCIIMsg = data['Msg']  # get values from dictionary
+        ASCIIHMAC = data['HMAC']
+        ASCIIKeys = data['Keys']
 
-        self.msg = msg['Msg']
-        self.HMAC = msg['HMAC']
-        self.keys = msg['Keys']
+        b64MSG = ASCIIMsg.encode('ascii')  # ascii to b64
+        b64HMAC = ASCIIHMAC.encode('ascii')
+        b64Keys = ASCIIKeys.encode('ascii')
+
+        self.msg = base64.decodebytes(b64MSG)  # b64 to bytes
+        self.HMAC = base64.decodebytes(b64HMAC)
+        self.keys = base64.decodebytes(b64Keys)
 
         self.RSADecrypt()
         self.HMACVerify()
-        print("Decrypted Message: ", self.AESDecrypt())
+        return(self.AESDecrypt())
 
     def RSADecrypt(self):
         with open(self.privateCertificate, 'rb') as keyFile:  # open private certificate file
