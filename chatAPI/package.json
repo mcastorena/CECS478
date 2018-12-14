@@ -1,0 +1,19 @@
+{
+  "name": "saas",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^0.8.5",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^5.7.0",
+    "mongoose": "^4.13.17",
+    "morgan": "^1.9.1",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.1"
+  }
+}
